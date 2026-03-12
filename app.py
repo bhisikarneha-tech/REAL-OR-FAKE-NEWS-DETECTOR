@@ -1,28 +1,57 @@
 import streamlit as st
 import joblib
+import requests
 
-vectorizer = joblib.load("vectorizer.jb")
-model= joblib.load("lr_model.jb")
+api_key= "86709657700346b0866f40526dc0f6cb"
 
-st.title("FAKE NEWS DETECTER")
-st.write("Enter a news articel below to check whether it is Fake or Real")
+url = f"https://newsapi.org/v2/top-headlines?country=us&apiKey= {api_key}"
 
-news_input= st.text_area('News Articels:','')
+response = requests.get(url)
 
-if st.button('check News'):
-    if news_input.strip():
+data = response.json()
 
-        transform_input= vectorizer.transform([news_input])
-        prediction= model.predict(transform_input)
+if "articles" in data:
+    articles = data["articles"]
+else:
+    articles = []
+    st.write("API Error:", data)
+model = joblib.load("models/fake_news_model.pkl")
+vectorizer = joblib.load("models/tfidf_vectorizer.pkl")
 
+st.title("Real Time Fake News Detection")
 
-        if prediction[0]==1:
-            st.success("The News is Real!")
-        else:
-            st.error("The News is Fake!")
+news = st.text_area("Enter News")
+
+if st.button("Predict"):
+
+    vec = vectorizer.transform([news])
+
+    prediction = model.predict(vec)
+
+    if prediction[0] == 0:
+        st.error("Fake News")
     else:
-            st.warning("Please enter the text to analyze.")
-            
-        
+        st.success("Real News")
 
+        api_key = "YOUR_API_KEY"
 
+url = f"https://newsapi.org/v2/top-headlines?country=us&apiKey={api_key}"
+
+response = requests.get(url)
+
+articles = response.json()["articles"]
+
+st.header("Live News Detection")
+
+for article in articles:
+
+    title = article["title"]
+
+    vec = vectorizer.transform([title])
+
+    pred = model.predict(vec)
+
+    if pred[0] == 0:
+        st.write(title," → Fake")
+    else:
+        st.write(title," → Real")
