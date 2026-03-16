@@ -6,10 +6,20 @@ app= Flask(__name__)
 model = joblib.load("models/fake_news_model.pkl")
 vectorizer = joblib.load("models/tfidf_vectorizer.pkl")
 
+@app.route("/")
+def home():
+    return {
+        "message": "Fake News Detection API is running",
+        "endpoints": {
+            "realtime news": "/realtime-news",
+            "prediction": "/predict"
+        }
+    }
+
 @app.route("/realtime-news")
 def realtime_news():
 
-    API_KEY = "YOUR_NEWS_API_KEY"
+    API_KEY = "pub_639b0616e86c455ab79783c900be7dc8Y"
 
     url = f"https://newsapi.org/v2/top-headlines?country=in&apiKey={API_KEY}"
 
