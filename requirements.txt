@@ -10,3 +10,6 @@ transformers
 streamlit
 requests
 wordcloud
+flask
+twilio
+gunicorn

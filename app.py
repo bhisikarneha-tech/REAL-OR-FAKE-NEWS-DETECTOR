@@ -9,14 +9,12 @@ vectorizer = joblib.load("models/tfidf_vectorizer.pkl")
 @app.route("/realtime-news")
 def realtime_news():
 
-    API_KEY = "86709657700346b0866f40526dc0f6cb"
+    API_KEY = "YOUR_NEWS_API_KEY"
 
-    url = f"https://newsapi.org/v2/everything?q=india&language=en&apiKey={API_KEY}"
+    url = f"https://newsapi.org/v2/top-headlines?country=in&apiKey={API_KEY}"
 
     response = requests.get(url)
     data = response.json()
-
-    print(data)
 
     results = []
 
@@ -32,7 +30,7 @@ def realtime_news():
             label = "Fake" if prediction == 1 else "Real"
 
             results.append({
-                "news": title,
+                "headline": title,
                 "prediction": label
             })
 
