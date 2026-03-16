@@ -1,13 +1,8 @@
 pandas
 numpy
-matplotlib
-seaborn
 scikit-learn
 nltk
 joblib
-torch
-transformers
-streamlit
 requests
 wordcloud
 flask
