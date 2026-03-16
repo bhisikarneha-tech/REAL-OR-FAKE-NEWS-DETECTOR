@@ -1,57 +1,58 @@
-import streamlit as st
+from flask import Flask, request, jsonify
 import joblib
 import requests
 
-api_key= "86709657700346b0866f40526dc0f6cb"
-
-url = f"https://newsapi.org/v2/top-headlines?country=us&apiKey= {api_key}"
-
-response = requests.get(url)
-
-data = response.json()
-
-if "articles" in data:
-    articles = data["articles"]
-else:
-    articles = []
-    st.write("API Error:", data)
+app= Flask(__name__)
 model = joblib.load("models/fake_news_model.pkl")
 vectorizer = joblib.load("models/tfidf_vectorizer.pkl")
 
-st.title("Real Time Fake News Detection")
+@app.route("/realtime-news")
+def realtime_news():
 
-news = st.text_area("Enter News")
+    API_KEY = "86709657700346b0866f40526dc0f6cb"
 
-if st.button("Predict"):
+    url = f"https://newsapi.org/v2/everything?q=india&language=en&apiKey={API_KEY}"
 
-    vec = vectorizer.transform([news])
+    response = requests.get(url)
+    data = response.json()
 
-    prediction = model.predict(vec)
+    print(data)
 
-    if prediction[0] == 0:
-        st.error("Fake News")
-    else:
-        st.success("Real News")
+    results = []
 
-        api_key = "YOUR_API_KEY"
+    if data.get("status") == "ok":
 
-url = f"https://newsapi.org/v2/top-headlines?country=us&apiKey={api_key}"
+        for article in data["articles"][:10]:
 
-response = requests.get(url)
+            title = article["title"]
 
-articles = response.json()["articles"]
+            vect = vectorizer.transform([title])
+            prediction = model.predict(vect)[0]
 
-st.header("Live News Detection")
+            label = "Fake" if prediction == 1 else "Real"
 
-for article in articles:
+            results.append({
+                "news": title,
+                "prediction": label
+            })
 
-    title = article["title"]
+    return jsonify(results)
 
-    vec = vectorizer.transform([title])
+@app.route("/predict", methods=["POST"])
+def predict():
 
-    pred = model.predict(vec)
+    data = request.json
+    news = data["text"]
 
-    if pred[0] == 0:
-        st.write(title," → Fake")
-    else:
-        st.write(title," → Real")
+    vect = vectorizer.transform([news])
+    prediction = model.predict(vect)[0]
+
+    label = "Fake" if prediction == 1 else "Real"
+
+    return jsonify({
+        "news": news,
+        "prediction": label
+    })
+if __name__ == "__main__":
+    app.run(debug=True)
+
