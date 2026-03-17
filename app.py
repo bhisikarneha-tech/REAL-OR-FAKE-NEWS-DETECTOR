@@ -25,10 +25,11 @@ def realtime_news():
 
     response = requests.get(url)
     data = response.json()
+    print(data)
 
     results = []
 
-    if data.get("status") == "ok"
+    if data.get("status") == "ok":
 
         for article in data["articles"][:10]:
 
