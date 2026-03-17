@@ -2,7 +2,7 @@ import requests
 @app.route("/realtime-news", methods=["GET"])
 def realtime_news():
 
-    API_KEY = "YOUR_NEWS_API_KEY"
+    API_KEY = "86709657700346b0866f40526dc0f6cb"
 
     url = f"https://newsapi.org/v2/top-headlines?country=in&apiKey={API_KEY}"
 

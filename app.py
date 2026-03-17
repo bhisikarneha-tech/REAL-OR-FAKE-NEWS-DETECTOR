@@ -19,7 +19,7 @@ def home():
 @app.route("/realtime-news")
 def realtime_news():
 
-    API_KEY = "pub_639b0616e86c455ab79783c900be7dc8Y"
+    API_KEY = "86709657700346b0866f40526dc0f6cb"
 
     url = f"https://newsapi.org/v2/top-headlines?country=in&apiKey={API_KEY}"
 
@@ -28,7 +28,7 @@ def realtime_news():
 
     results = []
 
-    if data.get("status") == "ok":
+    if data.get("status") == "ok"
 
         for article in data["articles"][:10]:
 
