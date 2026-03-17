@@ -29,21 +29,23 @@ def realtime_news():
 
     results = []
 
-    if data.get("status") == "ok":
-       for article in data["articles"][:10]:
-        title = article["title"]
+if data.get("status") == "ok":
+       for article in data.get("articles", [])[:10]:
+        title = article.get("title", "")
 
-        vect = vectorizer.transform([title])
-        prediction = model.predict(vect)[0]
-
-        label = "Real" if prediction == 1 else "Fake"
+        try:
+            vect = vectorizer.transform([title])
+            prediction = model.predict(vect)[0]
+            label = "Real" if prediction == 1 else "Fake"
+        except:
+            label = "Unknown"
 
         results.append({
             "title": title,
             "prediction": label
         })
 
-    return results
+     return jsonify(results)
 
 @app.route("/predict", methods=["POST"])
 def predict():
