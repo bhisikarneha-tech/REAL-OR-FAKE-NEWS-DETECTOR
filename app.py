@@ -18,34 +18,32 @@ def home():
 
 @app.route("/realtime-news")
 def realtime_news():
+    API_KEY = "your_api_key"
 
-    API_KEY = "86709657700346b0866f40526dc0f6cb"
-
-    url = f"https://newsapi.org/v2/top-headlines?country=in&apiKey={API_KEY}"
+    url = f"https://newsapi.org/v2/top-headlines?country=us&apiKey={API_KEY}"
 
     response = requests.get(url)
     data = response.json()
-    
 
     results = []
 
-if data.get("status") == "ok":
-       for article in data.get("articles", [])[:10]:
-        title = article.get("title", "")
+    if data.get("status") == "ok":
+        for article in data.get("articles", [])[:10]:
+            title = article.get("title", "")
 
-        try:
-            vect = vectorizer.transform([title])
-            prediction = model.predict(vect)[0]
-            label = "Real" if prediction == 1 else "Fake"
-        except:
-            label = "Unknown"
+            try:
+                vect = vectorizer.transform([title])
+                prediction = model.predict(vect)[0]
+                label = "Real" if prediction == 1 else "Fake"
+            except:
+                label = "Unknown"
 
-        results.append({
-            "title": title,
-            "prediction": label
-        })
+            results.append({
+                "title": title,
+                "prediction": label
+            })
 
-     return jsonify(results)
+    return jsonify(results)
 
 @app.route("/predict", methods=["POST"])
 def predict():
