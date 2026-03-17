@@ -18,38 +18,10 @@ def home():
 
 @app.route("/realtime-news")
 def realtime_news():
-    try:
-        API_KEY = "your_api_key"
-
-        url = f"https://newsapi.org/v2/everything?q=india&language=en&sortBy=publishedAt&apiKey={API_KEY}"
-
-        response = requests.get(url)
-        data = response.json()
-
-        results = []
-
-        if data.get("status") == "ok":
-            for article in data.get("articles", [])[:10]:
-                title = article.get("title", "")
-
-                try:
-                    vect = vectorizer.transform([title])
-                    prediction = model.predict(vect)[0]
-                    label = "Real" if prediction == 1 else "Fake"
-                except Exception as e:
-                    label = "Error"
-
-                results.append({
-                    "title": title,
-                    "prediction": label
-                })
-
-        return jsonify(results)
-
-    except Exception as e:
-        return jsonify({
-            "error": str(e)
-        })
+    return [
+        {"title": "Breaking News: Test News 1", "prediction": "Real"},
+        {"title": "Fake News Example", "prediction": "Fake"}
+    ]
 
 @app.route("/predict", methods=["POST"])
 def predict():
